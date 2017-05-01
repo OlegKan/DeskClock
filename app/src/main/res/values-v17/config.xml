@@ -19,5 +19,4 @@
      for different hardware and product builds. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- no need for the dock app, we have Dreams now -->
-    <bool name="config_dockAppEnabled">false</bool>
 </resources>

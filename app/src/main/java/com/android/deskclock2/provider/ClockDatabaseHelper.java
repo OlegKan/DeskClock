@@ -22,52 +22,20 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import android.text.TextUtils;
 
 import com.android.deskclock2.LogUtils;
-
-import java.util.Calendar;
 
 /**
  * Helper class for opening the database from multiple providers.  Also provides
  * some common functionality.
  */
 class ClockDatabaseHelper extends SQLiteOpenHelper {
-    /**
-     * Original Clock Database.
-     **/
-    private static final int VERSION_5 = 5;
-
-    /**
-     * Added alarm_instances table
-     * Added selected_cities table
-     * Added DELETE_AFTER_USE column to alarms table
-     */
-    private static final int VERSION_6 = 6;
-
-    /**
-     * Added alarm settings to instance table.
-     */
-    private static final int VERSION_7 = 7;
-
-    /**
-     * Removed selected_cities table.
-     */
-    private static final int VERSION_8 = 8;
-
-    // This creates a default alarm at 8:30 for every Mon,Tue,Wed,Thu,Fri
-    private static final String DEFAULT_ALARM_1 = "(8, 30, 31, 0, 1, '', NULL, 0);";
-
-    // This creates a default alarm at 9:30 for every Sat,Sun
-    private static final String DEFAULT_ALARM_2 = "(9, 00, 96, 0, 1, '', NULL, 0);";
 
     // Database and table names
     static final String DATABASE_NAME = "alarms.db";
-    static final String OLD_ALARMS_TABLE_NAME = "alarms";
+    static final int DATABASE_VERSION = 1;
     static final String ALARMS_TABLE_NAME = "alarm_templates";
     static final String INSTANCES_TABLE_NAME = "alarm_instances";
-    private static final String SELECTED_CITIES_TABLE_NAME = "selected_cities";
 
     private static void createAlarmsTable(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + ALARMS_TABLE_NAME + " (" +
@@ -103,92 +71,18 @@ class ClockDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public ClockDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, VERSION_8);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         createAlarmsTable(db);
         createInstanceTable(db);
-
-        // insert default alarms
-        LogUtils.i("Inserting default alarms");
-        String cs = ", "; //comma and space
-        String insertMe = "INSERT INTO " + ALARMS_TABLE_NAME + " (" +
-                ClockContract.AlarmsColumns.HOUR + cs +
-                ClockContract.AlarmsColumns.MINUTES + cs +
-                ClockContract.AlarmsColumns.DAYS_OF_WEEK + cs +
-                ClockContract.AlarmsColumns.ENABLED + cs +
-                ClockContract.AlarmsColumns.VIBRATE + cs +
-                ClockContract.AlarmsColumns.LABEL + cs +
-                ClockContract.AlarmsColumns.RINGTONE + cs +
-                ClockContract.AlarmsColumns.DELETE_AFTER_USE + ") VALUES ";
-        db.execSQL(insertMe + DEFAULT_ALARM_1);
-        db.execSQL(insertMe + DEFAULT_ALARM_2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
         LogUtils.v("Upgrading alarms database from version %d to %d", oldVersion, currentVersion);
-
-        if (oldVersion <= VERSION_7) {
-            // This was not used in VERSION_7 or prior, so we can just drop it.
-            db.execSQL("DROP TABLE IF EXISTS " + SELECTED_CITIES_TABLE_NAME + ";");
-        }
-
-        if (oldVersion <= VERSION_6) {
-            // This was not used in VERSION_6 or prior, so we can just drop it.
-            db.execSQL("DROP TABLE IF EXISTS " + INSTANCES_TABLE_NAME + ";");
-
-            // Create new alarms table and copy over the data
-            createAlarmsTable(db);
-            createInstanceTable(db);
-
-            LogUtils.i("Copying old alarms to new table");
-            final String[] OLD_TABLE_COLUMNS = {
-                    "_id",
-                    "hour",
-                    "minutes",
-                    "daysofweek",
-                    "enabled",
-                    "vibrate",
-                    "message",
-                    "alert",
-            };
-            try (Cursor cursor = db.query(OLD_ALARMS_TABLE_NAME, OLD_TABLE_COLUMNS,
-                    null, null, null, null, null)) {
-                final Calendar currentTime = Calendar.getInstance();
-                while (cursor != null && cursor.moveToNext()) {
-                    final Alarm alarm = new Alarm();
-                    alarm.id = cursor.getLong(0);
-                    alarm.hour = cursor.getInt(1);
-                    alarm.minutes = cursor.getInt(2);
-                    alarm.daysOfWeek = new DaysOfWeek(cursor.getInt(3));
-                    alarm.enabled = cursor.getInt(4) == 1;
-                    alarm.vibrate = cursor.getInt(5) == 1;
-                    alarm.label = cursor.getString(6);
-
-                    final String alertString = cursor.getString(7);
-                    if ("silent".equals(alertString)) {
-                        alarm.alert = Alarm.NO_RINGTONE_URI;
-                    } else {
-                        alarm.alert =
-                                TextUtils.isEmpty(alertString) ? null : Uri.parse(alertString);
-                    }
-
-                    // Save new version of alarm and create alarm instance for it
-                    db.insert(ALARMS_TABLE_NAME, null, Alarm.createContentValues(alarm));
-                    if (alarm.enabled) {
-                        AlarmInstance newInstance = alarm.createInstanceAfter(currentTime);
-                        db.insert(INSTANCES_TABLE_NAME, null,
-                                AlarmInstance.createContentValues(newInstance));
-                    }
-                }
-            }
-
-            LogUtils.i("Dropping old alarm table");
-            db.execSQL("DROP TABLE IF EXISTS " + OLD_ALARMS_TABLE_NAME + ";");
-        }
     }
 
     long fixAlarmInsert(ContentValues values) {

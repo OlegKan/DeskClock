@@ -18,7 +18,6 @@
 <!-- These resources are around just to allow their values to be customized
      for different hardware and product builds. -->
 <resources>
-    <bool name="config_dockAppEnabled">true</bool>
     <bool name="config_rotateAlarmAlert">false</bool>
     <!-- Number of world clocks in a row, for the clock tab. -->
     <!-- Number of world clocks in a row, for the digital appwidget. -->

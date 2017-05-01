@@ -69,23 +69,6 @@
             </intent-filter>
         </activity>
 
-        <activity-alias
-            android:name="DockClock"
-            android:enabled="@bool/config_dockAppEnabled"
-            android:icon="@mipmap/ic_launcher_alarmclock"
-            android:label="@string/app_label"
-            android:launchMode="singleTask"
-            android:targetActivity="DeskClock"
-            android:theme="@style/DeskClockTheme"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.DESK_DOCK" />
-            </intent-filter>
-        </activity-alias>
-
         <activity
             android:name=".settings.SettingsActivity"
             android:excludeFromRecents="true"
