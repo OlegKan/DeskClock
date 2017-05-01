@@ -109,10 +109,8 @@ public final class AlarmClockFragment extends DeskClockFragment implements
         super.onResume();
 
         final DeskClock activity = (DeskClock) getActivity();
-        if (activity.getSelectedTab() == DeskClock.ALARM_TAB_INDEX) {
-            setFabAppearance();
-            setLeftRightButtonAppearance();
-        }
+        setFabAppearance();
+        setLeftRightButtonAppearance();
 
         // Check if another app asked us to create a blank new alarm.
         final Intent intent = getActivity().getIntent();
@@ -266,7 +264,7 @@ public final class AlarmClockFragment extends DeskClockFragment implements
 
     @Override
     public void setFabAppearance() {
-        if (mFab == null || getDeskClock().getSelectedTab() != DeskClock.ALARM_TAB_INDEX) {
+        if (mFab == null) {
             return;
         }
         mFab.setVisibility(View.VISIBLE);
@@ -276,8 +274,7 @@ public final class AlarmClockFragment extends DeskClockFragment implements
 
     @Override
     public void setLeftRightButtonAppearance() {
-        if (mLeftButton == null || mRightButton == null ||
-                getDeskClock().getSelectedTab() != DeskClock.ALARM_TAB_INDEX) {
+        if (mLeftButton == null || mRightButton == null) {
             return;
         }
         mLeftButton.setVisibility(View.INVISIBLE);

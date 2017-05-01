@@ -44,11 +44,6 @@ public class DeskClock extends BaseActivity
 
     private static final String TAG = "DeskClock";
 
-    // Alarm action for midnight (so we can update the date display).
-    public static final String SELECT_TAB_INTENT_EXTRA = "deskclock.select.tab";
-
-    public static final int ALARM_TAB_INDEX = 0;
-
     private ImageView mFab;
     private ImageButton mLeftButton;
     private ImageButton mRightButton;
@@ -92,9 +87,7 @@ public class DeskClock extends BaseActivity
             setBackgroundColor(getResources().getColor(R.color.default_background),
                     false /* animate */);
 
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.content, new AlarmClockFragment())
-                    .commit();
+            setFragment();
         }
 
         mFab.setOnClickListener(new OnClickListener() {
@@ -138,9 +131,7 @@ public class DeskClock extends BaseActivity
         if (mRecreateActivity) {
             mRecreateActivity = false;
 
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.content, new AlarmClockFragment())
-                    .commit();
+            setFragment();
         }
     }
 
@@ -200,5 +191,16 @@ public class DeskClock extends BaseActivity
 
     public ImageButton getRightButton() {
         return mRightButton;
+    }
+
+    private void setFragment() {
+
+        AlarmClockFragment fragment = new AlarmClockFragment();
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content, fragment)
+                .commit();
+
+        fragment.setFabAppearance();
     }
 }

@@ -81,8 +81,7 @@ public class HandleApiCalls extends Activity {
         // Opens the UI for Alarms
         final Intent alarmIntent =
                 Alarm.createIntent(mAppContext, DeskClock.class, Alarm.INVALID_ID)
-                        .setAction(action)
-                        .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX);
+                        .setAction(action);
         startActivity(alarmIntent);
 
         final Intent intent = getIntent();
@@ -268,7 +267,6 @@ public class HandleApiCalls extends Activity {
             Intent createAlarm = Alarm.createIntent(this, DeskClock.class, Alarm.INVALID_ID);
             createAlarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             createAlarm.putExtra(AlarmClockFragment.ALARM_CREATE_NEW_INTENT_EXTRA, true);
-            createAlarm.putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX);
             startActivity(createAlarm);
             Voice.notifyFailure(this, getString(R.string.invalid_time, hour, minutes, " "));
             LogUtils.i("HandleApiCalls no/invalid time; opening UI");
@@ -313,8 +311,7 @@ public class HandleApiCalls extends Activity {
     }
 
     private void handleShowAlarms() {
-        startActivity(new Intent(this, DeskClock.class)
-                .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX));
+        startActivity(new Intent(this, DeskClock.class));
         Events.sendAlarmEvent(R.string.action_show, R.string.label_intent);
         LogUtils.i("HandleApiCalls show alarms");
     }
@@ -325,7 +322,6 @@ public class HandleApiCalls extends Activity {
         AlarmUtils.popAlarmSetToast(this, instance.getAlarmTime().getTimeInMillis());
         if (!skipUi) {
             Intent showAlarm = Alarm.createIntent(this, DeskClock.class, instance.mAlarmId);
-            showAlarm.putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX);
             showAlarm.putExtra(AlarmClockFragment.SCROLL_TO_ALARM_INTENT_EXTRA, instance.mAlarmId);
             showAlarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(showAlarm);
