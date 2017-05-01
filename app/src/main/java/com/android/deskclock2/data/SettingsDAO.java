@@ -24,7 +24,6 @@ import com.android.deskclock2.R;
 import com.android.deskclock2.Utils;
 import com.android.deskclock2.data.DataModel.CitySort;
 import com.android.deskclock2.data.DataModel.ClockStyle;
-import com.android.deskclock2.settings.ScreensaverSettingsActivity;
 
 import java.util.Locale;
 
@@ -59,13 +58,6 @@ final class SettingsDAO {
         final CitySort newSort = oldSort == CitySort.NAME ? CitySort.UTC_OFFSET : CitySort.NAME;
         final SharedPreferences prefs = getSharedPreferences(context);
         prefs.edit().putInt(KEY_SORT_PREFERENCE, newSort.ordinal()).apply();
-    }
-
-    /**
-     * @return a value indicating whether analog or digital clocks are displayed on the screensaver
-     */
-    static ClockStyle getScreensaverClockStyle(Context context) {
-        return getClockStyle(context, ScreensaverSettingsActivity.KEY_CLOCK_STYLE);
     }
 
     /**

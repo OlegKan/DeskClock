@@ -16,45 +16,25 @@
 
 package com.android.deskclock2;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
-import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.os.BuildCompat;
 import android.support.v4.util.ArraySet;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
-import android.text.format.Time;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.TextClock;
-import android.widget.TextView;
 
-import com.android.deskclock2.data.DataModel;
 import com.android.deskclock2.provider.AlarmInstance;
 import com.android.deskclock2.provider.DaysOfWeek;
 import com.android.deskclock2.settings.SettingsActivity;
@@ -67,7 +47,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class Utils {
     // Single-char version of day name, e.g.: 'S', 'M', 'T', 'W', 'T', 'F', 'S'
@@ -123,12 +102,6 @@ public class Utils {
         }
     }
 
-    public static void enforceNotMainLooper() {
-        if (Looper.getMainLooper() == Looper.myLooper()) {
-            throw new IllegalAccessError("May not call from main thread.");
-        }
-    }
-
     /**
      * @return {@code true} if the device is prior to {@link Build.VERSION_CODES#LOLLIPOP}
      */
@@ -180,265 +153,6 @@ public class Utils {
     public static float calculateRadiusOffset(
             float strokeSize, float dotStrokeSize, float markerStrokeSize) {
         return Math.max(strokeSize, Math.max(dotStrokeSize, markerStrokeSize));
-    }
-
-    /**
-     * Uses {@link Utils#calculateRadiusOffset(float, float, float)} after fetching the values
-     * from the resources.
-     */
-    public static float calculateRadiusOffset(Resources resources) {
-        if (resources != null) {
-            float strokeSize = resources.getDimension(R.dimen.circletimer_circle_size);
-            float dotStrokeSize = resources.getDimension(R.dimen.circletimer_dot_size);
-            float markerStrokeSize = resources.getDimension(R.dimen.circletimer_marker_size);
-            return calculateRadiusOffset(strokeSize, dotStrokeSize, markerStrokeSize);
-        } else {
-            return 0f;
-        }
-    }
-
-    /** Runnable for use with screensaver and dream, to move the clock every minute.
-     *  registerViews() must be called prior to posting.
-     */
-    public static class ScreensaverMoveSaverRunnable implements Runnable {
-        static final long MOVE_DELAY = 60000; // DeskClock.SCREEN_SAVER_MOVE_DELAY;
-        static final long SLIDE_TIME = 10000;
-        static final long FADE_TIME = 3000;
-
-        static final boolean SLIDE = false;
-
-        private View mContentView, mSaverView;
-        private final Handler mHandler;
-
-        private static TimeInterpolator mSlowStartWithBrakes;
-
-
-        public ScreensaverMoveSaverRunnable(Handler handler) {
-            mHandler = handler;
-            mSlowStartWithBrakes = new TimeInterpolator() {
-                @Override
-                public float getInterpolation(float x) {
-                    return (float)(Math.cos((Math.pow(x,3) + 1) * Math.PI) / 2.0f) + 0.5f;
-                }
-            };
-        }
-
-        public void registerViews(View contentView, View saverView) {
-            mContentView = contentView;
-            mSaverView = saverView;
-        }
-
-        @Override
-        public void run() {
-            long delay = MOVE_DELAY;
-            if (mContentView == null || mSaverView == null) {
-                mHandler.removeCallbacks(this);
-                mHandler.postDelayed(this, delay);
-                return;
-            }
-
-            final float xrange = mContentView.getWidth() - mSaverView.getWidth();
-            final float yrange = mContentView.getHeight() - mSaverView.getHeight();
-
-            if (xrange == 0 && yrange == 0) {
-                delay = 500; // back in a split second
-            } else {
-                final int nextx = (int) (Math.random() * xrange);
-                final int nexty = (int) (Math.random() * yrange);
-
-                if (mSaverView.getAlpha() == 0f) {
-                    // jump right there
-                    mSaverView.setX(nextx);
-                    mSaverView.setY(nexty);
-                    ObjectAnimator.ofFloat(mSaverView, "alpha", 0f, 1f)
-                        .setDuration(FADE_TIME)
-                        .start();
-                } else {
-                    AnimatorSet s = new AnimatorSet();
-                    Animator xMove   = ObjectAnimator.ofFloat(mSaverView,
-                                         "x", mSaverView.getX(), nextx);
-                    Animator yMove   = ObjectAnimator.ofFloat(mSaverView,
-                                         "y", mSaverView.getY(), nexty);
-
-                    Animator xShrink = ObjectAnimator.ofFloat(mSaverView, "scaleX", 1f, 0.85f);
-                    Animator xGrow   = ObjectAnimator.ofFloat(mSaverView, "scaleX", 0.85f, 1f);
-
-                    Animator yShrink = ObjectAnimator.ofFloat(mSaverView, "scaleY", 1f, 0.85f);
-                    Animator yGrow   = ObjectAnimator.ofFloat(mSaverView, "scaleY", 0.85f, 1f);
-                    AnimatorSet shrink = new AnimatorSet(); shrink.play(xShrink).with(yShrink);
-                    AnimatorSet grow = new AnimatorSet(); grow.play(xGrow).with(yGrow);
-
-                    Animator fadeout = ObjectAnimator.ofFloat(mSaverView, "alpha", 1f, 0f);
-                    Animator fadein = ObjectAnimator.ofFloat(mSaverView, "alpha", 0f, 1f);
-
-
-                    if (SLIDE) {
-                        s.play(xMove).with(yMove);
-                        s.setDuration(SLIDE_TIME);
-
-                        s.play(shrink.setDuration(SLIDE_TIME/2));
-                        s.play(grow.setDuration(SLIDE_TIME/2)).after(shrink);
-                        s.setInterpolator(mSlowStartWithBrakes);
-                    } else {
-                        AccelerateInterpolator accel = new AccelerateInterpolator();
-                        DecelerateInterpolator decel = new DecelerateInterpolator();
-
-                        shrink.setDuration(FADE_TIME).setInterpolator(accel);
-                        fadeout.setDuration(FADE_TIME).setInterpolator(accel);
-                        grow.setDuration(FADE_TIME).setInterpolator(decel);
-                        fadein.setDuration(FADE_TIME).setInterpolator(decel);
-                        s.play(shrink);
-                        s.play(fadeout);
-                        s.play(xMove.setDuration(0)).after(FADE_TIME);
-                        s.play(yMove.setDuration(0)).after(FADE_TIME);
-                        s.play(fadein).after(FADE_TIME);
-                        s.play(grow).after(FADE_TIME);
-                    }
-                    s.start();
-                }
-
-                long now = System.currentTimeMillis();
-                long adjust = (now % 60000);
-                delay = delay
-                        + (MOVE_DELAY - adjust) // minute aligned
-                        - (SLIDE ? 0 : FADE_TIME) // start moving before the fade
-                        ;
-            }
-
-            mHandler.removeCallbacks(this);
-            mHandler.postDelayed(this, delay);
-        }
-    }
-
-    /** Setup to find out when the quarter-hour changes (e.g. Kathmandu is GMT+5:45) **/
-    public static long getAlarmOnQuarterHour() {
-        final Calendar calendarInstance = Calendar.getInstance();
-        final long now = System.currentTimeMillis();
-        return getAlarmOnQuarterHour(calendarInstance, now);
-    }
-
-    static long getAlarmOnQuarterHour(Calendar calendar, long now) {
-        //  Set 1 second to ensure quarter-hour threshold passed.
-        calendar.set(Calendar.SECOND, 1);
-        calendar.set(Calendar.MILLISECOND, 0);
-        int minute = calendar.get(Calendar.MINUTE);
-        calendar.add(Calendar.MINUTE, 15 - (minute % 15));
-        long alarmOnQuarterHour = calendar.getTimeInMillis();
-
-        // Verify that alarmOnQuarterHour is within the next 15 minutes
-        long delta = alarmOnQuarterHour - now;
-        if (0 >= delta || delta > 901000) {
-            // Something went wrong in the calculation, schedule something that is
-            // about 15 minutes. Next time , it will align with the 15 minutes border.
-            alarmOnQuarterHour = now + 901000;
-        }
-        return alarmOnQuarterHour;
-    }
-
-    // Setup a thread that starts at midnight plus one second. The extra second is added to ensure
-    // the date has changed.
-    public static void setMidnightUpdater(Handler handler, Runnable runnable) {
-        String timezone = TimeZone.getDefault().getID();
-        if (handler == null || runnable == null || timezone == null) {
-            return;
-        }
-        long now = System.currentTimeMillis();
-        Time time = new Time(timezone);
-        time.set(now);
-        long runInMillis = ((24 - time.hour) * 3600 - time.minute * 60 - time.second + 1) * 1000;
-        handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, runInMillis);
-    }
-
-    // Stop the midnight update thread
-    public static void cancelMidnightUpdater(Handler handler, Runnable runnable) {
-        if (handler == null || runnable == null) {
-            return;
-        }
-        handler.removeCallbacks(runnable);
-    }
-
-    // Setup a thread that starts at the quarter-hour plus one second. The extra second is added to
-    // ensure dates have changed.
-    public static void setQuarterHourUpdater(Handler handler, Runnable runnable) {
-        String timezone = TimeZone.getDefault().getID();
-        if (handler == null || runnable == null || timezone == null) {
-            return;
-        }
-        long runInMillis = getAlarmOnQuarterHour() - System.currentTimeMillis();
-        // Ensure the delay is at least one second.
-        if (runInMillis < 1000) {
-            runInMillis = 1000;
-        }
-        handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, runInMillis);
-    }
-
-    // Stop the quarter-hour update thread
-    public static void cancelQuarterHourUpdater(Handler handler, Runnable runnable) {
-        if (handler == null || runnable == null) {
-            return;
-        }
-        handler.removeCallbacks(runnable);
-    }
-
-    /**
-     * For screensavers to set whether the digital or analog clock should be displayed.
-     * Returns the view to be displayed.
-     */
-    public static View setScreensaverClockStyle(View digitalClock, View analogClock) {
-        final DataModel.ClockStyle clockStyle = DataModel.getDataModel().getScreensaverClockStyle();
-        switch (clockStyle) {
-            case ANALOG:
-                digitalClock.setVisibility(View.GONE);
-                analogClock.setVisibility(View.VISIBLE);
-                return analogClock;
-            case DIGITAL:
-                digitalClock.setVisibility(View.VISIBLE);
-                analogClock.setVisibility(View.GONE);
-                return digitalClock;
-        }
-
-        throw new IllegalStateException("unexpected clock style: " + clockStyle);
-    }
-
-    /**
-     * For screensavers to dim the lights if necessary.
-     */
-    public static void dimClockView(boolean dim, View clockView) {
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setColorFilter(new PorterDuffColorFilter(
-                        (dim ? 0x40FFFFFF : 0xC0FFFFFF),
-                PorterDuff.Mode.MULTIPLY));
-        clockView.setLayerType(View.LAYER_TYPE_HARDWARE, paint);
-    }
-
-    /**
-     * @return The next alarm from {@link AlarmManager}
-     */
-    public static String getNextAlarm(Context context) {
-        return isPreL() ? getNextAlarmPreL(context) : getNextAlarmLOrLater(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static String getNextAlarmPreL(Context context) {
-        final ContentResolver cr = context.getContentResolver();
-        return Settings.System.getString(cr, Settings.System.NEXT_ALARM_FORMATTED);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static String getNextAlarmLOrLater(Context context) {
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        final AlarmManager.AlarmClockInfo info = am.getNextAlarmClock();
-        if (info != null) {
-            final long triggerTime = info.getTriggerTime();
-            final Calendar alarmTime = Calendar.getInstance();
-            alarmTime.setTimeInMillis(triggerTime);
-            return AlarmUtils.getFormattedTime(context, alarmTime);
-        }
-
-        return null;
     }
 
     public static boolean isAlarmWithin24Hours(AlarmInstance alarmInstance) {
@@ -519,24 +233,6 @@ public class Utils {
 
     public static CharSequence get24ModeFormat() {
         return DateFormat.getBestDateTimePattern(Locale.getDefault(), "Hm");
-    }
-
-    /**
-     * Returns string denoting the timezone hour offset (e.g. GMT -8:00)
-     * @param useShortForm Whether to return a short form of the header that rounds to the
-     *                     nearest hour and excludes the "GMT" prefix
-     */
-    public static String getGMTHourOffset(TimeZone timezone, boolean useShortForm) {
-        final int gmtOffset = timezone.getRawOffset();
-        final long hour = gmtOffset / DateUtils.HOUR_IN_MILLIS;
-        final long min = (Math.abs(gmtOffset) % DateUtils.HOUR_IN_MILLIS) /
-                DateUtils.MINUTE_IN_MILLIS;
-
-        if (useShortForm) {
-            return String.format("%+d", hour);
-        } else {
-            return String.format("GMT %+d:%02d", hour, min);
-        }
     }
 
     /**

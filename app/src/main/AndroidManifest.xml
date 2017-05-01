@@ -150,12 +150,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.VOICE" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SET_TIMER" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.VOICE" />
-            </intent-filter>
         </activity>
 
         <activity-alias
@@ -177,32 +171,10 @@
             </intent-filter>
         </receiver>
 
-        <!-- Dream (screensaver) implementation -->
-
-        <!-- Settings activity for screensaver -->
-        <activity
-            android:name=".settings.ScreensaverSettingsActivity"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/screensaver_settings"
-            android:taskAffinity=""
-            android:theme="@style/SettingsTheme"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
         <activity
             android:name=".AlarmSelectionActivity"
             android:label="@string/dismiss_alarm"
             android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" />
-
-        <!-- This activity displays only the timers that have expired with only a reset button
-         present. This makes the activity appropriate for display above the lock screen so that
-         users have the limited ability to silence expired timers but nothing else. -->
-
-        <!-- Legacy broadcast receiver that honors old scheduled timers across app upgrade. -->
 
     </application>
 </manifest>

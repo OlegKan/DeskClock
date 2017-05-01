@@ -20,10 +20,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.provider.Settings;
 
-import com.android.deskclock2.data.DataModel.ClockStyle;
-
-import java.util.TimeZone;
-
 /**
  * All settings data is accessed via this model.
  */
@@ -33,10 +29,6 @@ final class SettingsModel {
 
     SettingsModel(Context context) {
         mContext = context;
-    }
-
-    ClockStyle getScreensaverClockStyle() {
-        return SettingsDAO.getScreensaverClockStyle(mContext);
     }
 
     Uri getDefaultAlarmRingtoneUri() {

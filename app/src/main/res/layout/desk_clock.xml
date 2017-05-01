@@ -36,20 +36,12 @@
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/sliding_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@android:color/transparent"
-                app:tabMode="fixed" />
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.android.deskclock2.widget.RtlViewPager
-        android:id="@+id/desk_clock_pager"
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

@@ -34,9 +34,6 @@ public final class DataModel {
     /** Indicates the preferred sort order of cities. */
     public enum CitySort {NAME, UTC_OFFSET}
 
-    public static final String ACTION_DIGITAL_WIDGET_CHANGED =
-            "com.android.deskclock2.DIGITAL_WIDGET_CHANGED";
-
     /** The single instance of this data model that exists for the life of the application. */
     private static final DataModel sDataModel = new DataModel();
 
@@ -71,31 +68,6 @@ public final class DataModel {
         mSettingsModel = new SettingsModel(mContext);
         mNotificationModel = new NotificationModel();
         mAlarmModel = new AlarmModel(mContext, mSettingsModel);
-    }
-
-    /**
-     * Posts a runnable to the main thread and blocks until the runnable executes. Used to access
-     * the data model from the main thread.
-     */
-    public void run(Runnable runnable) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            runnable.run();
-            return;
-        }
-
-        final ExecutedRunnable er = new ExecutedRunnable(runnable);
-        getHandler().post(er);
-
-        // Wait for the data to arrive, if it has not.
-        synchronized (er) {
-            if (!er.isExecuted()) {
-                try {
-                    er.wait();
-                } catch (InterruptedException ignored) {
-                    // ignore
-                }
-            }
-        }
     }
 
     /**
@@ -157,44 +129,5 @@ public final class DataModel {
     public String getAlarmRingtoneTitle(Uri uri) {
         enforceMainLooper();
         return mAlarmModel.getAlarmRingtoneTitle(uri);
-    }
-
-    //
-    // Settings
-    //
-
-    /**
-     * @return the style of clock to display in the clock screensaver
-     */
-    public ClockStyle getScreensaverClockStyle() {
-        enforceMainLooper();
-        return mSettingsModel.getScreensaverClockStyle();
-    }
-
-    /**
-     * Used to execute a delegate runnable and track its completion.
-     */
-    private static class ExecutedRunnable implements Runnable {
-
-        private final Runnable mDelegate;
-        private boolean mExecuted;
-
-        private ExecutedRunnable(Runnable delegate) {
-            this.mDelegate = delegate;
-        }
-
-        @Override
-        public void run() {
-            mDelegate.run();
-
-            synchronized (this) {
-                mExecuted = true;
-                notifyAll();
-            }
-        }
-
-        private boolean isExecuted() {
-            return mExecuted;
-        }
     }
 }
