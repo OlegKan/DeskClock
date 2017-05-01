@@ -29,7 +29,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.android.deskclock2.actionbarmenu.ActionBarMenuManager;
 import com.android.deskclock2.alarms.AlarmStateManager;
 import com.android.deskclock2.data.DataModel;
 import com.android.deskclock2.provider.Alarm;
@@ -49,8 +48,6 @@ public class DeskClock extends BaseActivity
     public static final String SELECT_TAB_INTENT_EXTRA = "deskclock.select.tab";
 
     public static final int ALARM_TAB_INDEX = 0;
-
-    private final ActionBarMenuManager mActionBarMenuManager = new ActionBarMenuManager(this);
 
     private ImageView mFab;
     private ImageButton mLeftButton;

@@ -92,6 +92,7 @@
             android:label="@string/settings"
             android:taskAffinity=""
             android:theme="@style/SettingsTheme"
+            android:parentActivityName=".DeskClock"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

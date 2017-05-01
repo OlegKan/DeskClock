@@ -25,16 +25,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.text.format.DateUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.android.deskclock2.BaseActivity;
 import com.android.deskclock2.LogUtils;
 import com.android.deskclock2.R;
 import com.android.deskclock2.Utils;
-import com.android.deskclock2.actionbarmenu.ActionBarMenuManager;
-import com.android.deskclock2.actionbarmenu.MenuItemControllerFactory;
-import com.android.deskclock2.actionbarmenu.NavUpMenuItemController;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,36 +52,11 @@ public final class SettingsActivity extends BaseActivity {
     public static final String VOLUME_BEHAVIOR_SNOOZE = "1";
     public static final String VOLUME_BEHAVIOR_DISMISS = "2";
 
-    private final ActionBarMenuManager mActionBarMenuManager = new ActionBarMenuManager(this);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(AudioManager.STREAM_ALARM);
         setContentView(R.layout.settings);
-        mActionBarMenuManager.addMenuItemController(new NavUpMenuItemController(this))
-            .addMenuItemController(MenuItemControllerFactory.getInstance()
-                    .buildMenuItemControllers(this));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        mActionBarMenuManager.createOptionsMenu(menu, getMenuInflater());
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        mActionBarMenuManager.prepareShowMenu(menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mActionBarMenuManager.handleMenuItemClick(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public static class PrefsFragment extends PreferenceFragment
