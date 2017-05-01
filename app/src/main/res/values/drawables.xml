@@ -16,5 +16,4 @@
   -->
 
 <resources>
-    <item name="ic_alarm_small" type="drawable">@drawable/ic_alarm_small_18dp</item>
 </resources>

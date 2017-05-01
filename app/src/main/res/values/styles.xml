@@ -17,12 +17,6 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="clock">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-    </style>
-
     <style name="BaseActivityTheme" parent="Theme.AppCompat">
         <item name="android:windowBackground">@color/default_background</item>
 
@@ -116,73 +110,14 @@
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 
-    <style name="RoundTouchButton">
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@null</item>
-    </style>
-
     <style name="alarm_list_left_column">
         <item name="android:layout_width">68dip</item>
         <item name="android:layout_height">68dip</item>
     </style>
 
-    <style name="small_bold">
-        <item name="android:textSize">@dimen/small_font_size</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="small_thin">
-        <item name="android:textSize">@dimen/small_font_size</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-
     <style name="no_alarms">
         <item name="android:textSize">@dimen/no_alarm_font_size</item>
         <item name="android:textColor">@color/white_69p</item>
-    </style>
-
-    <style name="small_light">
-        <item name="android:textSize">@dimen/small_font_size</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-    </style>
-
-    <style name="timer_setup_digit">
-        <item name="android:textSize">@dimen/timer_setup_font_size</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-
-    <style name="timer_setup_label">
-        <item name="android:textSize">@dimen/timer_setup_label_size</item>
-    </style>
-
-    <style name="medium_light">
-        <item name="android:textSize">@dimen/medium_font_size</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-
-    <style name="widget_medium_thin">
-        <item name="android:textSize">@dimen/widget_medium_font_size</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-        <item name="android:shadowRadius">@dimen/digital_widget_shadow_radius</item>
-        <item name="android:shadowColor">@color/digital_widget_shadow_color</item>
-        <item name="android:shadowDy">@dimen/digital_widget_shadow_dy</item>
-    </style>
-
-    <style name="label">
-        <item name="android:textSize">@dimen/label_font_size</item>
-    </style>
-
-    <style name="label_not_caps" parent="label">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="widget_label" parent="label">
-        <item name="android:textSize">@dimen/widget_label_font_size</item>
-        <item name="android:shadowRadius">@dimen/digital_widget_shadow_radius</item>
-        <item name="android:shadowColor">@color/digital_widget_shadow_color</item>
-        <item name="android:shadowDy">@dimen/digital_widget_shadow_dy</item>
     </style>
 
     <style name="header">
@@ -222,49 +157,6 @@
     <style name="alarm_label_bold" parent="alarm_label">
         <item name="android:textStyle">bold</item>
     </style>
-
-    <style name="body">
-        <item name="android:textSize">@dimen/body_font_size</item>
-    </style>
-
-    <style name="undo_toast" parent="body">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/color_accent</item>
-    </style>
-
-    <style name="body_not_caps" parent="body">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="body_bold">
-        <item name="android:textSize">@dimen/body_font_size</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="labelEditTextStyle">
-        <item name="android:textCursorDrawable">@null</item>
-        <item name="android:inputType">textCapSentences</item>
-        <item name="android:selectAllOnFocus">true</item>
-    </style>
-
-    <style name="dialpad">
-        <item name="android:textSize">@dimen/dialpad_font_size</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-
-    <style name="PrimaryLabelTextParentAppearance">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/label_text_size</item>
-    </style>
-
-    <style name="PrimaryLabelTextAppearance" parent="PrimaryLabelTextParentAppearance" />
-
-    <style name="SecondaryLabelTextParentAppearance">
-        <item name="android:textColor">@color/white_69p</item>
-        <item name="android:textSize">@dimen/label_text_size</item>
-    </style>
-
-    <style name="SecondaryLabelTextAppearance" parent="SecondaryLabelTextParentAppearance" />
 
     <style name="TextAppearance">
         <item name="android:textSize">16sp</item>

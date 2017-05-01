@@ -17,5 +17,4 @@
 
 <resources>
     <!-- Use dp on purpose to ensure consistency across multiple screen sizes. -->
-    <dimen name="widget_label_font_size">10dp</dimen>
 </resources>

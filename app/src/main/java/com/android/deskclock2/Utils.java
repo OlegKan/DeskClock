@@ -38,6 +38,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.os.BuildCompat;
+import android.support.v4.util.ArraySet;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -47,7 +48,6 @@ import android.text.format.Time;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
-import android.util.ArraySet;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -445,41 +445,6 @@ public class Utils {
         final Calendar nextAlarmTime = alarmInstance.getAlarmTime();
         final long nextAlarmTimeMillis = nextAlarmTime.getTimeInMillis();
         return nextAlarmTimeMillis - System.currentTimeMillis() <= DateUtils.DAY_IN_MILLIS;
-    }
-
-    /** Clock views can call this to refresh their alarm to the next upcoming value. */
-    public static void refreshAlarm(Context context, View clock) {
-        final TextView nextAlarmView = (TextView) clock.findViewById(R.id.nextAlarm);
-        if (nextAlarmView == null) {
-            return;
-        }
-
-        final String alarm = getNextAlarm(context);
-        if (!TextUtils.isEmpty(alarm)) {
-            final String description = context.getString(R.string.next_alarm_description, alarm);
-            nextAlarmView.setText(alarm);
-            nextAlarmView.setContentDescription(description);
-            nextAlarmView.setVisibility(View.VISIBLE);
-        } else {
-            nextAlarmView.setVisibility(View.GONE);
-        }
-    }
-
-    /** Clock views can call this to refresh their date. **/
-    public static void updateDate(String dateSkeleton, String descriptionSkeleton, View clock) {
-        final TextView dateDisplay = (TextView) clock.findViewById(R.id.date);
-        if (dateDisplay == null) {
-            return;
-        }
-
-        final Locale l = Locale.getDefault();
-        final String datePattern = DateFormat.getBestDateTimePattern(l, dateSkeleton);
-        final String descriptionPattern = DateFormat.getBestDateTimePattern(l, descriptionSkeleton);
-
-        final Date now = new Date();
-        dateDisplay.setText(new SimpleDateFormat(datePattern, l).format(now));
-        dateDisplay.setVisibility(View.VISIBLE);
-        dateDisplay.setContentDescription(new SimpleDateFormat(descriptionPattern, l).format(now));
     }
 
     /***
