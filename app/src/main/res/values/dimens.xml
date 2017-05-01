@@ -122,7 +122,7 @@
     <dimen name="circle_size">280dp</dimen>
     <!--
         list_bottom_spacing = footer_button_size + footer_button_layout_margin.
-        Used by both StopwatchFragment and AlarmFragment.
+        Used by AlarmFragment.
     -->
     <dimen name="list_bottom_spacing">72dip</dimen>
 

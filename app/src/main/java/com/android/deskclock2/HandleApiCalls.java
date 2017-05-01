@@ -27,24 +27,18 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.AlarmClock;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 
 import com.android.deskclock2.alarms.AlarmStateManager;
-import com.android.deskclock2.data.DataModel;
-import com.android.deskclock2.data.Timer;
 import com.android.deskclock2.events.Events;
 import com.android.deskclock2.provider.Alarm;
 import com.android.deskclock2.provider.AlarmInstance;
 import com.android.deskclock2.provider.DaysOfWeek;
-import com.android.deskclock2.timer.TimerFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
-
-import static android.text.format.DateUtils.SECOND_IN_MILLIS;
 
 /**
  * This activity is never visible. It processes all public intents defined by {@link AlarmClock}
@@ -71,9 +65,6 @@ public class HandleApiCalls extends Activity {
                     break;
                 case AlarmClock.ACTION_SHOW_ALARMS:
                     handleShowAlarms();
-                    break;
-                case AlarmClock.ACTION_SET_TIMER:
-                    handleSetTimer(intent);
                     break;
                 case AlarmClock.ACTION_DISMISS_ALARM:
                     handleDismissAlarm(intent.getAction());
@@ -326,55 +317,6 @@ public class HandleApiCalls extends Activity {
                 .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX));
         Events.sendAlarmEvent(R.string.action_show, R.string.label_intent);
         LogUtils.i("HandleApiCalls show alarms");
-    }
-
-    private void handleSetTimer(Intent intent) {
-        // If no length is supplied, show the timer setup view.
-        if (!intent.hasExtra(AlarmClock.EXTRA_LENGTH)) {
-            startActivity(TimerFragment.createTimerSetupIntent(this));
-            LogUtils.i("HandleApiCalls showing timer setup");
-            return;
-        }
-
-        // Verify that the timer length is between one second and one day.
-        final long lengthMillis = SECOND_IN_MILLIS * intent.getIntExtra(AlarmClock.EXTRA_LENGTH, 0);
-        if (lengthMillis < Timer.MIN_LENGTH || lengthMillis > Timer.MAX_LENGTH) {
-            Voice.notifyFailure(this, getString(R.string.invalid_timer_length));
-            LogUtils.i("Invalid timer length requested: " + lengthMillis);
-            return;
-        }
-
-        final String label = getMessageFromIntent(intent);
-        final boolean skipUi = intent.getBooleanExtra(AlarmClock.EXTRA_SKIP_UI, false);
-
-        // Attempt to reuse an existing timer that is Reset with the same length and label.
-        Timer timer = null;
-        for (Timer t : DataModel.getDataModel().getTimers()) {
-            if (!t.isReset()) { continue; }
-            if (t.getLength() != lengthMillis) { continue; }
-            if (!TextUtils.equals(label, t.getLabel())) { continue; }
-
-            timer = t;
-            break;
-        }
-
-        // Create a new timer if one could not be reused.
-        if (timer == null) {
-            timer = DataModel.getDataModel().addTimer(lengthMillis, label, skipUi);
-            Events.sendTimerEvent(R.string.action_create, R.string.label_intent);
-        }
-
-        // Start the selected timer.
-        DataModel.getDataModel().startTimer(timer);
-        Events.sendTimerEvent(R.string.action_start, R.string.label_intent);
-        Voice.notifySuccess(this, getString(R.string.timer_created));
-
-        // If not instructed to skip the UI, display the running timer.
-        if (!skipUi) {
-            startActivity(new Intent(this, DeskClock.class)
-                    .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.TIMER_TAB_INDEX)
-                    .putExtra(HandleDeskClockApiCalls.EXTRA_TIMER_ID, timer.getId()));
-        }
     }
 
     private void setupInstance(AlarmInstance instance, boolean skipUi) {

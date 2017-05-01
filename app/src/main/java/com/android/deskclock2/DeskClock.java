@@ -27,10 +27,10 @@ import android.support.design.widget.TabLayout;
 import android.support.design.widget.TabLayout.Tab;
 import android.support.design.widget.TabLayout.ViewPagerOnTabSelectedListener;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.util.ArraySet;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.ArraySet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,14 +41,11 @@ import android.widget.ImageView;
 
 import com.android.deskclock2.actionbarmenu.ActionBarMenuManager;
 import com.android.deskclock2.actionbarmenu.MenuItemControllerFactory;
-import com.android.deskclock2.actionbarmenu.NightModeMenuItemController;
 import com.android.deskclock2.actionbarmenu.SettingMenuItemController;
 import com.android.deskclock2.alarms.AlarmStateManager;
 import com.android.deskclock2.data.DataModel;
 import com.android.deskclock2.events.Events;
 import com.android.deskclock2.provider.Alarm;
-import com.android.deskclock2.stopwatch.StopwatchFragment;
-import com.android.deskclock2.timer.TimerFragment;
 import com.android.deskclock2.widget.RtlViewPager;
 
 import java.util.ArrayList;
@@ -68,9 +65,6 @@ public class DeskClock extends BaseActivity
     public static final String SELECT_TAB_INTENT_EXTRA = "deskclock.select.tab";
 
     public static final int ALARM_TAB_INDEX = 0;
-    public static final int CLOCK_TAB_INDEX = 1;
-    public static final int TIMER_TAB_INDEX = 2;
-    public static final int STOPWATCH_TAB_INDEX = 3;
 
     private final ActionBarMenuManager mActionBarMenuManager = new ActionBarMenuManager(this);
 
@@ -113,19 +107,6 @@ public class DeskClock extends BaseActivity
         alarmTab.setIcon(R.drawable.ic_tab_alarm).setContentDescription(R.string.menu_alarm);
         mTabsAdapter.addTab(alarmTab, AlarmClockFragment.class, ALARM_TAB_INDEX);
 
-        final Tab clockTab = mTabLayout.newTab();
-        clockTab.setIcon(R.drawable.ic_tab_clock).setContentDescription(R.string.menu_clock);
-        mTabsAdapter.addTab(clockTab, ClockFragment.class, CLOCK_TAB_INDEX);
-
-        final Tab timerTab = mTabLayout.newTab();
-        timerTab.setIcon(R.drawable.ic_tab_timer).setContentDescription(R.string.menu_timer);
-        mTabsAdapter.addTab(timerTab, TimerFragment.class, TIMER_TAB_INDEX);
-
-        final Tab stopwatchTab = mTabLayout.newTab();
-        stopwatchTab.setIcon(R.drawable.ic_tab_stopwatch)
-                .setContentDescription(R.string.menu_stopwatch);
-        mTabsAdapter.addTab(stopwatchTab, StopwatchFragment.class, STOPWATCH_TAB_INDEX);
-
         mTabLayout.getTabAt(mSelectedTab).select();
         mViewPager.setCurrentItem(mSelectedTab);
         mTabsAdapter.notifySelectedPage(mSelectedTab);
@@ -137,9 +118,9 @@ public class DeskClock extends BaseActivity
         setVolumeControlStream(AudioManager.STREAM_ALARM);
 
         if (icicle != null) {
-            mSelectedTab = icicle.getInt(KEY_SELECTED_TAB, CLOCK_TAB_INDEX);
+            mSelectedTab = icicle.getInt(KEY_SELECTED_TAB, ALARM_TAB_INDEX);
         } else {
-            mSelectedTab = CLOCK_TAB_INDEX;
+            mSelectedTab = ALARM_TAB_INDEX;
 
             // Set the background color to initially match the theme value so that we can
             // smoothly transition to the dynamic color.
@@ -197,7 +178,6 @@ public class DeskClock extends BaseActivity
         // Configure the menu item controllers.
         mActionBarMenuManager
                 .addMenuItemController(new SettingMenuItemController(this))
-                .addMenuItemController(new NightModeMenuItemController(this))
                 .addMenuItemController(MenuItemControllerFactory.getInstance()
                         .buildMenuItemControllers(this));
 
@@ -310,11 +290,11 @@ public class DeskClock extends BaseActivity
             }
         }
 
-        private final List<TabInfo> mTabs = new ArrayList<>(4 /* number of fragments */);
+        private final List<TabInfo> mTabs = new ArrayList<>(1 /* number of fragments */);
         private final Context mContext;
         private final RtlViewPager mPager;
         // Used for doing callbacks to fragments.
-        private final Set<String> mFragmentTags = new ArraySet<>(4 /* number of fragments */);
+        private final Set<String> mFragmentTags = new ArraySet<>(1);
 
         public TabsAdapter(AppCompatActivity activity, RtlViewPager pager) {
             super(activity.getFragmentManager());
@@ -338,10 +318,6 @@ public class DeskClock extends BaseActivity
             if (fragment == null) {
                 TabInfo info = mTabs.get(position);
                 fragment = Fragment.instantiate(mContext, info.clss.getName(), info.args);
-                if (fragment instanceof TimerFragment) {
-                    ((TimerFragment) fragment).setFabAppearance();
-                    ((TimerFragment) fragment).setLeftRightButtonAppearance();
-                }
             }
             return fragment;
         }
@@ -386,15 +362,6 @@ public class DeskClock extends BaseActivity
                 switch (mSelectedTab) {
                     case ALARM_TAB_INDEX:
                         Events.sendAlarmEvent(R.string.action_show, R.string.label_deskclock);
-                        break;
-                    case CLOCK_TAB_INDEX:
-                        Events.sendClockEvent(R.string.action_show, R.string.label_deskclock);
-                        break;
-                    case TIMER_TAB_INDEX:
-                        Events.sendTimerEvent(R.string.action_show, R.string.label_deskclock);
-                        break;
-                    case STOPWATCH_TAB_INDEX:
-                        Events.sendStopwatchEvent(R.string.action_show, R.string.label_deskclock);
                         break;
                 }
             }

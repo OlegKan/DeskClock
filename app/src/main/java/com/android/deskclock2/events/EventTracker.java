@@ -29,7 +29,7 @@ public interface EventTracker {
     /**
      * Send category, action and label describing an event to Log system.
      *
-     * @param category string resource id indicating Alarm, Clock, Timer or Stopwatch or 0 for no
+     * @param category string resource id indicating Alarm, Clock or 0 for no
      *                 category
      * @param action string resource id indicating how the entity was altered;
      *               e.g. create, delete, fire, etc or 0 for no action
@@ -41,7 +41,7 @@ public interface EventTracker {
     /**
      * Send category, action and label describing an event to Log system.
      *
-     * @param category Alarm, Clock, Timer or Stopwatch
+     * @param category Alarm, Clock
      * @param action how the entity was altered; e.g. create, delete, fire, etc
      * @param label where the action originated; e.g. DeskClock (UI), Intent, Notification, etc.
      */

@@ -16,9 +16,6 @@
 
 package com.android.deskclock2.provider;
 
-import static com.android.deskclock2.provider.ClockDatabaseHelper.ALARMS_TABLE_NAME;
-import static com.android.deskclock2.provider.ClockDatabaseHelper.INSTANCES_TABLE_NAME;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -38,6 +35,9 @@ import com.android.deskclock2.provider.ClockContract.AlarmsColumns;
 import com.android.deskclock2.provider.ClockContract.InstancesColumns;
 
 import java.util.Map;
+
+import static com.android.deskclock2.provider.ClockDatabaseHelper.ALARMS_TABLE_NAME;
+import static com.android.deskclock2.provider.ClockDatabaseHelper.INSTANCES_TABLE_NAME;
 
 public class ClockProvider extends ContentProvider {
 

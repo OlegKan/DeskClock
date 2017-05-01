@@ -18,16 +18,12 @@ package com.android.deskclock2.settings;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.RingtonePreference;
-import android.preference.SwitchPreference;
-import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +35,6 @@ import com.android.deskclock2.Utils;
 import com.android.deskclock2.actionbarmenu.ActionBarMenuManager;
 import com.android.deskclock2.actionbarmenu.MenuItemControllerFactory;
 import com.android.deskclock2.actionbarmenu.NavUpMenuItemController;
-import com.android.deskclock2.data.DataModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,17 +49,9 @@ public final class SettingsActivity extends BaseActivity {
     public static final String KEY_ALARM_SNOOZE = "snooze_duration";
     public static final String KEY_ALARM_VOLUME = "volume_setting";
     public static final String KEY_ALARM_CRESCENDO = "alarm_crescendo_duration";
-    public static final String KEY_TIMER_CRESCENDO = "timer_crescendo_duration";
-    public static final String KEY_TIMER_RINGTONE = "timer_ringtone";
     public static final String KEY_AUTO_SILENCE = "auto_silence";
-    public static final String KEY_CLOCK_STYLE = "clock_style";
-    public static final String KEY_HOME_TZ = "home_time_zone";
-    public static final String KEY_AUTO_HOME_CLOCK = "automatic_home_clock";
-    public static final String KEY_DATE_TIME = "date_time";
     public static final String KEY_VOLUME_BUTTONS = "volume_button_setting";
     public static final String KEY_WEEK_START = "week_start";
-
-    public static final String TIMEZONE_LOCALE = "tz_locale";
 
     public static final String DEFAULT_VOLUME_BEHAVIOR = "0";
     public static final String VOLUME_BEHAVIOR_SNOOZE = "1";
@@ -109,7 +96,6 @@ public final class SettingsActivity extends BaseActivity {
             super.onCreate(savedInstanceState);
 
             addPreferencesFromResource(R.xml.settings);
-            loadTimeZoneList();
         }
 
         @Override
@@ -118,7 +104,6 @@ public final class SettingsActivity extends BaseActivity {
 
             // By default, do not recreate the DeskClock activity
             getActivity().setResult(RESULT_CANCELED);
-
         }
 
         @Override
@@ -137,21 +122,6 @@ public final class SettingsActivity extends BaseActivity {
                     String delay = (String) newValue;
                     updateAutoSnoozeSummary(autoSilencePref, delay);
                     break;
-                case KEY_CLOCK_STYLE:
-                    final ListPreference clockStylePref = (ListPreference) pref;
-                    idx = clockStylePref.findIndexOfValue((String) newValue);
-                    clockStylePref.setSummary(clockStylePref.getEntries()[idx]);
-                    break;
-                case KEY_HOME_TZ:
-                    final ListPreference homeTimezonePref = (ListPreference) pref;
-                    idx = homeTimezonePref.findIndexOfValue((String) newValue);
-                    homeTimezonePref.setSummary(homeTimezonePref.getEntries()[idx]);
-                    break;
-                case KEY_AUTO_HOME_CLOCK:
-                    final boolean autoHomeClockEnabled = ((SwitchPreference) pref).isChecked();
-                    final Preference homeTimeZonePref = findPreference(KEY_HOME_TZ);
-                    homeTimeZonePref.setEnabled(!autoHomeClockEnabled);
-                    break;
                 case KEY_VOLUME_BUTTONS:
                     final ListPreference volumeButtonsPref = (ListPreference) pref;
                     final int index = volumeButtonsPref.findIndexOfValue((String) newValue);
@@ -162,11 +132,6 @@ public final class SettingsActivity extends BaseActivity {
                             findPreference(KEY_WEEK_START);
                     idx = weekStartPref.findIndexOfValue((String) newValue);
                     weekStartPref.setSummary(weekStartPref.getEntries()[idx]);
-                    break;
-                case KEY_TIMER_RINGTONE:
-                    final RingtonePreference timerRingtonePref = (RingtonePreference)
-                            findPreference(KEY_TIMER_RINGTONE);
-                    timerRingtonePref.setSummary(DataModel.getDataModel().getTimerRingtoneTitle());
                     break;
             }
             // Set result so DeskClock knows to refresh itself
@@ -182,11 +147,6 @@ public final class SettingsActivity extends BaseActivity {
             }
 
             switch (pref.getKey()) {
-                case KEY_DATE_TIME:
-                    final Intent dialogIntent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(dialogIntent);
-                    return true;
                 case KEY_ALARM_VOLUME:
                     final AudioManager audioManager =
                             (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
@@ -196,18 +156,6 @@ public final class SettingsActivity extends BaseActivity {
                 default:
                     return false;
             }
-        }
-
-        /**
-         * Reconstruct the timezone list.
-         */
-        private void loadTimeZoneList() {
-            final CharSequence[][] timezones = getAllTimezones();
-            final ListPreference homeTimezonePref = (ListPreference) findPreference(KEY_HOME_TZ);
-            homeTimezonePref.setEntryValues(timezones[0]);
-            homeTimezonePref.setEntries(timezones[1]);
-            homeTimezonePref.setSummary(homeTimezonePref.getEntry());
-            homeTimezonePref.setOnPreferenceChangeListener(this);
         }
 
         /**
@@ -252,19 +200,6 @@ public final class SettingsActivity extends BaseActivity {
             updateAutoSnoozeSummary(autoSilencePref, delay);
             autoSilencePref.setOnPreferenceChangeListener(this);
 
-            final ListPreference clockStylePref = (ListPreference) findPreference(KEY_CLOCK_STYLE);
-            clockStylePref.setSummary(clockStylePref.getEntry());
-            clockStylePref.setOnPreferenceChangeListener(this);
-
-            final Preference autoHomeClockPref = findPreference(KEY_AUTO_HOME_CLOCK);
-            final boolean autoHomeClockEnabled = ((SwitchPreference) autoHomeClockPref).isChecked();
-            autoHomeClockPref.setOnPreferenceChangeListener(this);
-
-            final ListPreference homeTimezonePref = (ListPreference) findPreference(KEY_HOME_TZ);
-            homeTimezonePref.setEnabled(autoHomeClockEnabled);
-            homeTimezonePref.setSummary(homeTimezonePref.getEntry());
-            homeTimezonePref.setOnPreferenceChangeListener(this);
-
             final ListPreference volumeButtonsPref =
                     (ListPreference) findPreference(KEY_VOLUME_BUTTONS);
             volumeButtonsPref.setSummary(volumeButtonsPref.getEntry());
@@ -281,13 +216,6 @@ public final class SettingsActivity extends BaseActivity {
                     (CrescendoLengthDialog) findPreference(KEY_ALARM_CRESCENDO);
             alarmCrescendoPref.setSummary();
 
-            final CrescendoLengthDialog timerCrescendoPref =
-                    (CrescendoLengthDialog) findPreference(KEY_TIMER_CRESCENDO);
-            timerCrescendoPref.setSummary();
-
-            final Preference dateAndTimeSetting = findPreference(KEY_DATE_TIME);
-            dateAndTimeSetting.setOnPreferenceClickListener(this);
-
             final ListPreference weekStartPref = (ListPreference) findPreference(KEY_WEEK_START);
             // Set the default value programmatically
             final String value = weekStartPref.getValue();
@@ -296,11 +224,6 @@ public final class SettingsActivity extends BaseActivity {
             weekStartPref.setValueIndex(idx);
             weekStartPref.setSummary(weekStartPref.getEntries()[idx]);
             weekStartPref.setOnPreferenceChangeListener(this);
-
-            final RingtonePreference timerRingtonePref =
-                    (RingtonePreference) findPreference(KEY_TIMER_RINGTONE);
-            timerRingtonePref.setSummary(DataModel.getDataModel().getTimerRingtoneTitle());
-            timerRingtonePref.setOnPreferenceChangeListener(this);
         }
 
         private void updateAutoSnoozeSummary(ListPreference listPref, String delay) {

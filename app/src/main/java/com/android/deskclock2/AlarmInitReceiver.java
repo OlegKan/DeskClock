@@ -23,8 +23,6 @@ import android.content.Intent;
 import android.os.PowerManager.WakeLock;
 
 import com.android.deskclock2.alarms.AlarmStateManager;
-import com.android.deskclock2.data.DataModel;
-import com.android.deskclock2.events.Events;
 
 public class AlarmInitReceiver extends BroadcastReceiver {
 
@@ -59,21 +57,6 @@ public class AlarmInitReceiver extends BroadcastReceiver {
 
         // We need to increment the global id out of the async task to prevent race conditions
         AlarmStateManager.updateGlobalIntentId(context);
-
-        // Clear stopwatch data and reset timers because they rely on elapsed real-time values
-        // which are meaningless after a device reboot.
-        if (ACTION_BOOT_COMPLETED.equals(action)) {
-            DataModel.getDataModel().clearLaps();
-            DataModel.getDataModel().resetStopwatch();
-            Events.sendStopwatchEvent(R.string.action_reset, R.string.label_reboot);
-            DataModel.getDataModel().resetTimers(R.string.label_reboot);
-        }
-
-        // Notifications are canceled by the system on application upgrade. This broadcast signals
-        // that the new app is free to rebuild the notifications using the existing data.
-        if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
-            DataModel.getDataModel().updateAllNotifications();
-        }
 
         AsyncHandler.post(new Runnable() {
             @Override

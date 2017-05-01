@@ -25,10 +25,8 @@ import com.android.deskclock2.Utils;
 import com.android.deskclock2.data.DataModel.CitySort;
 import com.android.deskclock2.data.DataModel.ClockStyle;
 import com.android.deskclock2.settings.ScreensaverSettingsActivity;
-import com.android.deskclock2.settings.SettingsActivity;
 
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * This class encapsulates the storage of application preferences in {@link SharedPreferences}.
@@ -64,59 +62,10 @@ final class SettingsDAO {
     }
 
     /**
-     * @return {@code true} if a clock for the user's home timezone should be automatically
-     *      displayed when it doesn't match the current timezone
-     */
-    static boolean getAutoShowHomeClock(Context context) {
-        final SharedPreferences prefs = getSharedPreferences(context);
-        return prefs.getBoolean(SettingsActivity.KEY_AUTO_HOME_CLOCK, false);
-    }
-
-    /**
-     * @return the user's home timezone
-     */
-    static TimeZone getHomeTimeZone(Context context) {
-        final SharedPreferences prefs = getSharedPreferences(context);
-        final String defaultTimeZoneId = TimeZone.getDefault().getID();
-        final String timeZoneId = prefs.getString(SettingsActivity.KEY_HOME_TZ, defaultTimeZoneId);
-        return TimeZone.getTimeZone(timeZoneId);
-    }
-
-    /**
-     * Sets the user's home timezone to the current system timezone if no home timezone is yet set.
-     *
-     * @param homeTimeZone the timezone to set as the user's home timezone if necessary
-     */
-    static void setDefaultHomeTimeZone(Context context, TimeZone homeTimeZone) {
-        final SharedPreferences prefs = getSharedPreferences(context);
-        final String homeTimeZoneId = prefs.getString(SettingsActivity.KEY_HOME_TZ, null);
-        if (homeTimeZoneId == null) {
-            prefs.edit().putString(SettingsActivity.KEY_HOME_TZ, homeTimeZone.getID()).apply();
-        }
-    }
-
-    /**
-     * @return a value indicating whether analog or digital clocks are displayed in the app
-     */
-    static ClockStyle getClockStyle(Context context) {
-        return getClockStyle(context, SettingsActivity.KEY_CLOCK_STYLE);
-    }
-
-    /**
      * @return a value indicating whether analog or digital clocks are displayed on the screensaver
      */
     static ClockStyle getScreensaverClockStyle(Context context) {
         return getClockStyle(context, ScreensaverSettingsActivity.KEY_CLOCK_STYLE);
-    }
-
-    /**
-     * @return the uri of the selected ringtone or the {@code defaultUri} if no explicit selection
-     *      has yet been made
-     */
-    static Uri getTimerRingtoneUri(Context context, Uri defaultUri) {
-        final SharedPreferences prefs = getSharedPreferences(context);
-        final String uriString = prefs.getString(SettingsActivity.KEY_TIMER_RINGTONE, null);
-        return uriString == null ? defaultUri : Uri.parse(uriString);
     }
 
     /**

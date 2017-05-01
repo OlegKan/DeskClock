@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * Returns a list of alarms that are specified by the intent
- * processed by HandleDeskClockApiCalls
+ * processed by HandleDeskClockApiCalls_Deleted
  * if there are more than 1 matching alarms and the SEARCH_MODE is not ALL
  * we show a picker UI dialog
  */

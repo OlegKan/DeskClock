@@ -66,16 +66,6 @@ public final class Events {
     }
 
     /**
-     * Tracks an stopwatch event.
-     *
-     * @param action resource id of event action
-     * @param label resource id of event label
-     */
-    public static void sendStopwatchEvent(@StringRes int action, @StringRes int label) {
-        sendEvent(R.string.category_stopwatch, action, label);
-    }
-
-    /**
      * Tracks an event. Events have a category, action, label and value. This
      * method can be used to track events such as button presses or other user
      * interactions with your application (value is not used in this app).

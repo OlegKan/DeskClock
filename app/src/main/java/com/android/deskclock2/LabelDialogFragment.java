@@ -33,8 +33,6 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
-import com.android.deskclock2.data.DataModel;
-import com.android.deskclock2.data.Timer;
 import com.android.deskclock2.provider.Alarm;
 
 import static android.graphics.Color.RED;
@@ -48,12 +46,10 @@ public class LabelDialogFragment extends DialogFragment {
 
     private static final String KEY_LABEL = "label";
     private static final String KEY_ALARM = "alarm";
-    private static final String KEY_TIMER_ID = "timer_id";
     private static final String KEY_TAG = "tag";
 
     private AppCompatEditText mLabelBox;
     private Alarm mAlarm;
-    private int mTimerId;
     private String mTag;
 
     public static LabelDialogFragment newInstance(Alarm alarm, String label, String tag) {
@@ -61,16 +57,6 @@ public class LabelDialogFragment extends DialogFragment {
         args.putString(KEY_LABEL, label);
         args.putParcelable(KEY_ALARM, alarm);
         args.putString(KEY_TAG, tag);
-
-        final LabelDialogFragment frag = new LabelDialogFragment();
-        frag.setArguments(args);
-        return frag;
-    }
-
-    public static LabelDialogFragment newInstance(Timer timer) {
-        final Bundle args = new Bundle();
-        args.putString(KEY_LABEL, timer.getLabel());
-        args.putInt(KEY_TIMER_ID, timer.getId());
 
         final LabelDialogFragment frag = new LabelDialogFragment();
         frag.setArguments(args);
@@ -87,7 +73,6 @@ public class LabelDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle bundle = getArguments();
         mAlarm = bundle.getParcelable(KEY_ALARM);
-        mTimerId = bundle.getInt(KEY_TIMER_ID, -1);
         mTag = bundle.getString(KEY_TAG);
 
         final String label = savedInstanceState != null ?
@@ -127,11 +112,6 @@ public class LabelDialogFragment extends DialogFragment {
 
         if (mAlarm != null) {
             ((AlarmLabelDialogHandler) getActivity()).onDialogLabelSet(mAlarm, label, mTag);
-        } else if (mTimerId >= 0) {
-            final Timer timer = DataModel.getDataModel().getTimer(mTimerId);
-            if (timer != null) {
-                DataModel.getDataModel().setTimerLabel(timer, label);
-            }
         }
     }
 

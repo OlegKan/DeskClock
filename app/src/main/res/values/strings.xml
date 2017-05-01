@@ -169,23 +169,6 @@
          7: days hours minutes
     --><skip />
 
-    <!-- Timer notification: how long from now until timer goes off. -->
-    <string name="timer_notifications_less_min">Less than a minute remaining</string>
-    <string name="timer_notifications_hours"><xliff:g id="HOURS" example="2 hours">%1$s</xliff:g><xliff:g id="REMAINING" example="remaining"> %3$s</xliff:g></string>
-    <string name="timer_notifications_minutes"><xliff:g id="MINUTES" example="2 minutes">%2$s</xliff:g><xliff:g id="REMAINING" example="remaining"> %3$s</xliff:g></string>
-    <string name="timer_notifications_hours_minutes"><xliff:g id="HOURS" example="2 hours">%1$s</xliff:g> <xliff:g id="MINUTES" example="2 minutes">%2$s</xliff:g> remaining</string>
-
-    <!--
-        Verb inflection to use for single time units remaining
-        Ex. "1 minute remaining"
-    -->
-    <string name="timer_remaining_single">remaining</string>
-    <!--
-        Verb inflection to use for multiple time units remaining
-        Ex. "2 minutes remaining"
-    -->
-    <string name="timer_remaining_multiple">remaining</string>
-
     <!-- Alarm confirmation toast: Describes how long from now until alarm fires -->
     <string-array name="alarm_set">
         <item>Alarm set for less than 1 minute from now.</item>
@@ -417,12 +400,8 @@
     <!--  ActionBar strings -->
     <!-- Describes the purpose of the tab button which which switches the activity to the Alarm page -->
     <string name="menu_alarm">Alarm</string>
-    <!-- Describes the purpose of the tab button which which switches the activity to the Timer page -->
-    <string name="menu_timer">Timer</string>
     <!-- Describes the purpose of the tab button which which switches the activity to the Clock page -->
     <string name="menu_clock">Clock</string>
-    <!-- Describes the purpose of the tab button which which switches the activity to the Stopwatch page -->
-    <string name="menu_stopwatch">Stopwatch</string>
 
     <!-- Clock view buttons strings-->
     <!-- Describes the purpose of the button to start the activity to add/edit/delete alarms -->
@@ -445,28 +424,6 @@
     <!-- Label for selected cities in Cities list view -->
     <string name="selected_cities_label">Selected Cities</string>
 
-    <!-- Stopwatch and Timer shared strings -->
-    <!-- Describes the purpose of the button to resume running timer. [CHAR LIMIT=15] -->
-    <string name="sw_resume_button">Resume</string>
-    <!--
-        Describes the purpose of the button
-            for stopwatch: return stopwatch to zero and remove the lap times.
-            for timer: return timer to originally set duration.
-        [CHAR LIMIT=15]
-    -->
-    <string name="sw_reset_button">Reset</string>
-
-    <!-- Stopwatch strings -->
-    <!-- Describes the purpose of the button to begin running a stopwatch -->
-    <string name="sw_start_button">Start</string>
-    <!-- Describes the purpose of the button to pause a stopwatch. -->
-    <string name="sw_pause_button">Pause</string>
-    <!-- Describes the purpose of the button to record current the stopwatch value into the collection of lap times. -->
-    <string name="sw_lap_button">Lap</string>
-    <!-- Describes the purpose of the button to share the stopwatch value.
-         Also used as title for chooser when sharing stopwatch results. -->
-    <string name="sw_share_button">Share</string>
-
     <!-- Abbreviation for temporal hours [CHAR LIMIT=1] -->
     <string name="hours_label">h</string>
     <!-- Abbreviation for temporal minutes [CHAR LIMIT=1] -->
@@ -479,34 +436,6 @@
     <string name="seconds_label_description">seconds</string>
 
     <string name="zero">0</string>
-
-    <!--  Stopwatch share strings -->
-    <!-- Sentence within the message created to share the total time recorded within the stopwatch -->
-    <string name="sw_share_main">My time is <xliff:g id="time">%s</xliff:g></string>
-    <!-- Header within the message created to share a list of lap times (a new line is appended to this) -->
-    <string name="sw_share_laps">Lap times:</string>
-    <!-- Label to enumerate the number of laps in the notification the user has counted -->
-    <string name="sw_notification_lap_number">Lap <xliff:g id="number">%d</xliff:g></string>
-
-    <!-- Stopwatch accessibility strings -->
-    <plurals name="Nhours_description">
-        <!-- 1 hour -->
-        <item quantity="one">1 hour</item>
-        <!-- more -->
-        <item quantity="other"><xliff:g id="number" example="7">%d</xliff:g> hours</item>
-    </plurals>
-    <plurals name="Nminutes_description">
-        <!-- 1 minute -->
-        <item quantity="one">1 minute</item>
-        <!-- more -->
-        <item quantity="other"><xliff:g id="number" example="7">%d</xliff:g> minutes</item>
-    </plurals>
-    <plurals name="Nseconds_description">
-        <!-- 1 second -->
-        <item quantity="one">1 second</item>
-        <!-- more -->
-        <item quantity="other"><xliff:g id="number" example="7">%d</xliff:g> seconds</item>
-    </plurals>
 
     <!-- timer strings -->
     <!-- Describes the purpose of the button to add a new timer -->
@@ -538,8 +467,6 @@
         remaining. Arg is the number of timers. [CHAR LIMIT=25]
     -->
     <string name="timer_multi_times_up"><xliff:g id="NUM_TIMERS" example="2">%d</xliff:g> timers expired</string>
-    <!-- Label associated with a notification for a Timer -->
-    <string name="timer_notification_label">Timer</string>
     <!-- Toast content shown when user attempts to create a new timer when there are already 4 timers -->
     <string name="timers_max_count_reached">4 timers maximum</string>
     <!-- Describes the purpose of the notification button to pause the timer. [CHAR LIMIT=15] -->
@@ -878,12 +805,6 @@
         <!-- Confirmation more than one alarm  -->
         <item quantity="other">Delete selected alarms?</item>
     </plurals>
-
-    <!-- Timer deletion confirmation -->
-    <string name="timer_delete_confirmation">Delete this timer?</string>
-
-    <!-- world clock deletion confirmation -->
-    <string name="city_delete_confirmation">Remove this city?</string>
 
     <!-- Label for digital clock gadget displayed on-screen when that gadget is represented to the user. -->
     <string name="digital_gadget">Digital clock</string>
