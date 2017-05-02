@@ -46,26 +46,6 @@ public final class Events {
     }
 
     /**
-     * Tracks a clock event.
-     *
-     * @param action resource id of event action
-     * @param label resource id of event label
-     */
-    public static void sendClockEvent(@StringRes int action, @StringRes int label) {
-        sendEvent(R.string.category_clock, action, label);
-    }
-
-    /**
-     * Tracks an timer event.
-     *
-     * @param action resource id of event action
-     * @param label resource id of event label
-     */
-    public static void sendTimerEvent(@StringRes int action, @StringRes int label) {
-        sendEvent(R.string.category_timer, action, label);
-    }
-
-    /**
      * Tracks an event. Events have a category, action, label and value. This
      * method can be used to track events such as button presses or other user
      * interactions with your application (value is not used in this app).
@@ -78,34 +58,6 @@ public final class Events {
             @StringRes int label) {
         for (EventTracker eventTracker : sEventTrackers) {
             eventTracker.sendEvent(category, action, label);
-        }
-    }
-
-    /**
-     * Tracks an event. Events have a category, action, label and value. This
-     * method can be used to track events such as button presses or other user
-     * interactions with your application (value is not used in this app).
-     *
-     * @param category the event category
-     * @param action the event action
-     * @param label the event label
-     */
-    public static void sendEvent(String category, String action, String label) {
-        if (category != null && action != null) {
-            for (EventTracker eventTracker : sEventTrackers) {
-                eventTracker.sendEvent(category, action, label);
-            }
-        }
-    }
-
-    /**
-     * Tracks entering a view with a new app screen name.
-     *
-     * @param screenName the new app screen name
-     */
-    public static void sendView(String screenName) {
-        for (EventTracker eventTracker : sEventTrackers) {
-            eventTracker.sendView(screenName);
         }
     }
 }

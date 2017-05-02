@@ -18,8 +18,6 @@ package com.android.deskclock2.data;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 
 import static com.android.deskclock2.Utils.enforceMainLooper;
 
@@ -37,18 +35,10 @@ public final class DataModel {
     /** The single instance of this data model that exists for the life of the application. */
     private static final DataModel sDataModel = new DataModel();
 
-    private Handler mHandler;
-
     private Context mContext;
-
-    /** The model from which settings are fetched. */
-    private SettingsModel mSettingsModel;
 
     /** The model from which alarm data are fetched. */
     private AlarmModel mAlarmModel;
-
-    /** The model from which notification data are fetched. */
-    private NotificationModel mNotificationModel;
 
     public static DataModel getDataModel() {
         return sDataModel;
@@ -65,41 +55,8 @@ public final class DataModel {
         }
         mContext = context.getApplicationContext();
 
-        mSettingsModel = new SettingsModel(mContext);
-        mNotificationModel = new NotificationModel();
-        mAlarmModel = new AlarmModel(mContext, mSettingsModel);
-    }
-
-    /**
-     * @return a handler associated with the main thread
-     */
-    private synchronized Handler getHandler() {
-        if (mHandler == null) {
-            mHandler = new Handler(Looper.getMainLooper());
-        }
-        return mHandler;
-    }
-
-    //
-    // Application
-    //
-
-    /**
-     * @param inForeground {@code true} to indicate the application is open in the foreground
-     */
-    public void setApplicationInForeground(boolean inForeground) {
-        enforceMainLooper();
-
-        if (mNotificationModel.isApplicationInForeground() != inForeground) {
-            mNotificationModel.setApplicationInForeground(inForeground);
-        }
-    }
-
-    /**
-     * @return {@code true} when the application is open in the foreground; {@code false} otherwise
-     */
-    public boolean isApplicationInForeground() {
-        return mNotificationModel.isApplicationInForeground();
+        SettingsModel settingsModel = new SettingsModel(mContext);
+        mAlarmModel = new AlarmModel(mContext, settingsModel);
     }
 
     //

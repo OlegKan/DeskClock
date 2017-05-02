@@ -30,7 +30,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.android.deskclock2.alarms.AlarmStateManager;
-import com.android.deskclock2.data.DataModel;
 import com.android.deskclock2.provider.Alarm;
 import com.android.deskclock2.settings.SettingsActivity;
 
@@ -119,12 +118,6 @@ public class DeskClock extends BaseActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        DataModel.getDataModel().setApplicationInForeground(true);
-    }
-
-    @Override
     protected void onPostResume() {
         super.onPostResume();
 
@@ -133,12 +126,6 @@ public class DeskClock extends BaseActivity
 
             setFragment();
         }
-    }
-
-    @Override
-    public void onPause() {
-        DataModel.getDataModel().setApplicationInForeground(false);
-        super.onPause();
     }
 
     @Override

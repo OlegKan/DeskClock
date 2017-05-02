@@ -51,16 +51,6 @@ final class SettingsDAO {
     }
 
     /**
-     * Adjust the sort order of cities.
-     */
-    static void toggleCitySort(Context context) {
-        final CitySort oldSort = getCitySort(context);
-        final CitySort newSort = oldSort == CitySort.NAME ? CitySort.UTC_OFFSET : CitySort.NAME;
-        final SharedPreferences prefs = getSharedPreferences(context);
-        prefs.edit().putInt(KEY_SORT_PREFERENCE, newSort.ordinal()).apply();
-    }
-
-    /**
      * @return the uri of the selected ringtone or the {@code defaultUri} if no explicit selection
      *      has yet been made
      */

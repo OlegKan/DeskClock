@@ -118,10 +118,6 @@ public final class AlarmInstance implements ClockContract.InstancesColumns {
         return values;
     }
 
-    public static Intent createIntent(String action, long instanceId) {
-        return new Intent(action).setData(getUri(instanceId));
-    }
-
     public static Intent createIntent(Context context, Class<?> cls, long instanceId) {
         return new Intent(context, cls).setData(getUri(instanceId));
     }
@@ -182,15 +178,6 @@ public final class AlarmInstance implements ClockContract.InstancesColumns {
             }
         }
         return nextAlarmInstance;
-    }
-
-    /**
-     * Get alarm instance by id and state.
-     */
-    public static List<AlarmInstance> getInstancesByInstanceIdAndState(
-            ContentResolver contentResolver, long alarmInstanceId, int state) {
-        return getInstances(contentResolver, _ID + "=" + alarmInstanceId + " AND " + ALARM_STATE +
-                "=" + state);
     }
 
     /**
