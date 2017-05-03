@@ -26,12 +26,6 @@ import static com.android.deskclock2.Utils.enforceMainLooper;
  */
 public final class DataModel {
 
-    /** Indicates the display style of clocks. */
-    public enum ClockStyle {ANALOG, DIGITAL}
-
-    /** Indicates the preferred sort order of cities. */
-    public enum CitySort {NAME, UTC_OFFSET}
-
     /** The single instance of this data model that exists for the life of the application. */
     private static final DataModel sDataModel = new DataModel();
 

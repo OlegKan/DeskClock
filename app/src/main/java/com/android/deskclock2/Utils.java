@@ -146,15 +146,6 @@ public class Utils {
         return BuildCompat.isAtLeastN();
     }
 
-    /**
-     * Calculate the amount by which the radius of a CircleTimerView should be offset by any
-     * of the extra painted objects.
-     */
-    public static float calculateRadiusOffset(
-            float strokeSize, float dotStrokeSize, float markerStrokeSize) {
-        return Math.max(strokeSize, Math.max(dotStrokeSize, markerStrokeSize));
-    }
-
     public static boolean isAlarmWithin24Hours(AlarmInstance alarmInstance) {
         final Calendar nextAlarmTime = alarmInstance.getAlarmTime();
         final long nextAlarmTimeMillis = nextAlarmTime.getTimeInMillis();
@@ -333,12 +324,6 @@ public class Utils {
     public static String getNumberFormattedQuantityString(Context context, int id, int quantity) {
         final String localizedQuantity = NumberFormat.getInstance().format(quantity);
         return context.getResources().getQuantityString(id, quantity, localizedQuantity);
-    }
-
-    public static <E> ArraySet<E> newArraySet(Collection<E> collection) {
-        final ArraySet<E> arraySet = new ArraySet<>(collection.size());
-        arraySet.addAll(collection);
-        return arraySet;
     }
 
     /**
